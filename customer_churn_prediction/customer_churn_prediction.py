@@ -9,30 +9,20 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# -----------------------------------------------------------
-# Step 1: Load data
-# -----------------------------------------------------------
+
 df = pd.read_csv(os.path.join(BASE_DIR, "Churn_Modelling.csv"))
 
-# Show columns so we always know what we're working with
 print("Columns:", df.columns.tolist())
 
-# -----------------------------------------------------------
-# Step 2: Clean up
-# -----------------------------------------------------------
-# Drop identifier columns that don't help prediction
+
 drop_cols = ['RowNumber', 'CustomerId', 'Surname', 'customerID']
 df.drop(columns=[c for c in drop_cols if c in df.columns], inplace=True)
 
-# Encode categorical columns
 le = LabelEncoder()
 for col in df.columns:
     if df[col].dtype == 'object':
         df[col] = le.fit_transform(df[col])
 
-# -----------------------------------------------------------
-# Step 3: Set target — handles both common column names
-# -----------------------------------------------------------
 if 'Exited' in df.columns:
     target = 'Exited'
 elif 'Churn' in df.columns:
@@ -45,9 +35,7 @@ print(f"Target column : {target}")
 X = df.drop(target, axis=1)
 y = df[target]
 
-# -----------------------------------------------------------
-# Step 4: Split & train
-# -----------------------------------------------------------
+
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
@@ -61,13 +49,10 @@ test_acc  = accuracy_score(y_test,  model.predict(X_test))
 print(f"Train Accuracy : {train_acc:.2%}")
 print(f"Test  Accuracy : {test_acc:.2%}")
 
-# -----------------------------------------------------------
-# Step 5: Two plots
-# -----------------------------------------------------------
+
 fig, axes = plt.subplots(1, 2, figsize=(13, 5))
 fig.suptitle('Customer Churn Prediction', fontsize=14, fontweight='bold')
 
-# Plot 1 — Train vs Test Accuracy
 axes[0].bar(['Train', 'Test'], [train_acc, test_acc],
             color=['steelblue', 'coral'], edgecolor='white', width=0.4)
 axes[0].set_title('Train vs Test Accuracy')
@@ -76,7 +61,6 @@ axes[0].set_ylim(0, 1)
 for i, v in enumerate([train_acc, test_acc]):
     axes[0].text(i, v + 0.01, f'{v:.2%}', ha='center', fontweight='bold')
 
-# Plot 2 — Confusion Matrix
 cm = confusion_matrix(y_test, model.predict(X_test))
 sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=axes[1],
             xticklabels=['Stayed', 'Churned'],
