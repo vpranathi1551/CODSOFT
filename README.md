@@ -134,6 +134,4 @@ Contributions, issues, and feature requests are welcome. Feel free to open a pul
 
 ---
 
-## 📄 License
 
-This repository is open-source and available under the [MIT License](LICENSE).
